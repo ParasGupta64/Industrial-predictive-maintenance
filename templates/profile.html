@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>User Profile</h1>
+    <p class="subtitle">Manage your account information</p>
+</div>
+
+<div class="profile-container">
+    <div class="card profile-card">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                {{ current_user.username[0] | upper }}
+            </div>
+            <h2>{{ current_user.username }}</h2>
+            <p class="text-muted">{{ current_user.email }}</p>
+        </div>
+        
+        <div class="profile-details">
+            <div class="detail-item">
+                <span class="detail-label">Account Created</span>
+                <span class="detail-value">{{ current_user.created_at.strftime('%Y-%m-%d') }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">Total Predictions</span>
+                <span class="detail-value">{{ total_predictions }}</span>
+            </div>
+        </div>
+        
+        <div class="profile-actions">
+            <a href="{{ url_for('logout') }}" class="btn-danger">Logout</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

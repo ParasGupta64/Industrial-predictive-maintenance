@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>Welcome back, {{ current_user.username }}!</h1>
+    <p class="subtitle">Here's your machine health overview</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Total Predictions</h3>
+        <div class="stat-value">{{ total }}</div>
+    </div>
+    <div class="stat-card healthy">
+        <h3>Healthy</h3>
+        <div class="stat-value">{{ healthy }}</div>
+    </div>
+    <div class="stat-card danger">
+        <h3>Failure Risk</h3>
+        <div class="stat-value">{{ failure }}</div>
+    </div>
+</div>
+
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>Smarter Maintenance<br>for a More Reliable Tomorrow</h1>
+        <p>Use machine learning and AI to predict failures, understand causes, and keep your operations healthy.</p>
+        <div>
+            <a href="{{ url_for('predict') }}" class="btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                New Prediction &rarr;
+            </a>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="hero-panel">
+            <div class="panel-item">
+                <div class="panel-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h4l2-9 5 18 3-9h6"></path></svg>
+                </div>
+                <div class="panel-text">
+                    <h4>Predict Failures Early</h4>
+                    <p>Reduce unexpected downtime</p>
+                </div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                </div>
+                <div class="panel-text">
+                    <h4>AI-Powered Insights</h4>
+                    <p>Get detailed explanations</p>
+                </div>
+            </div>
+            <div class="panel-item">
+                <div class="panel-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                </div>
+                <div class="panel-text">
+                    <h4>Improve Reliability</h4>
+                    <p>Keep your production running</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card recent-predictions-card">
+    <div class="card-header">
+        <h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            Recent Predictions
+        </h2>
+        <a href="{{ url_for('history') }}" class="btn-secondary btn-sm">View All &rarr;</a>
+    </div>
+    {% if recent %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date &amp; Time</th>
+                    <th>Machine Type</th>
+                    <th>Temp (K)</th>
+                    <th>Speed (rpm)</th>
+                    <th>Torque (Nm)</th>
+                    <th>Wear (min)</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pred in recent %}
+                <tr>
+                    <td>{{ pred.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td><span class="badge type-badge">{{ pred.machine_type }}</span></td>
+                    <td>{{ "%.1f"|format(pred.air_temp) }}</td>
+                    <td>{{ pred.rotational_speed }}</td>
+                    <td>{{ pred.torque }}</td>
+                    <td>{{ pred.tool_wear }}</td>
+                    <td>
+                        {% if pred.ml_prediction == 0 %}
+                            <span class="badge healthy-badge">Healthy</span>
+                        {% else %}
+                            <span class="badge danger-badge">Failure</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('result', prediction_id=pred.id) }}" class="btn-secondary btn-sm">View Result</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div style="padding: 2rem; text-align: center; color: var(--text-muted);">
+        <p>No predictions yet. Create your first prediction!</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>AI Maintenance Analysis</h1>
+    <p class="subtitle">Detailed explanation powered by Gemini AI</p>
+</div>
+
+<div class="card ai-analysis-card">
+    <div class="analysis-header">
+        <div class="analysis-meta">
+            <span class="meta-item"><strong>Prediction ID:</strong> #{{ prediction.id }}</span>
+            <span class="meta-item"><strong>Date:</strong> {{ prediction.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
+            <span class="meta-item"><strong>Status:</strong> 
+                {% if prediction.ml_prediction == 0 %}
+                    <span class="badge healthy-badge">Healthy</span>
+                {% else %}
+                    <span class="badge danger-badge">Failure Risk</span>
+                {% endif %}
+            </span>
+        </div>
+        <a href="{{ url_for('result', prediction_id=prediction.id) }}" class="btn-secondary btn-sm">Back to Summary</a>
+    </div>
+    
+    <div class="analysis-content markdown-body">
+        {{ explanation | safe }}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>Analysis History</h1>
+    <p class="subtitle">Review your past predictions and AI reports</p>
+</div>
+
+<div class="card history-card">
+    {% if predictions %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Date &amp; Time</th>
+                    <th>Machine Type</th>
+                    <th>Temp (K)</th>
+                    <th>Speed (rpm)</th>
+                    <th>Torque (Nm)</th>
+                    <th>Wear (min)</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pred in predictions %}
+                <tr>
+                    <td>{{ pred.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td><span class="badge type-badge">{{ pred.machine_type }}</span></td>
+                    <td>{{ "%.1f"|format(pred.air_temp) }}</td>
+                    <td>{{ pred.rotational_speed }}</td>
+                    <td>{{ pred.torque }}</td>
+                    <td>{{ pred.tool_wear }}</td>
+                    <td>
+                        {% if pred.ml_prediction == 0 %}
+                            <span class="badge healthy-badge">Healthy</span>
+                        {% else %}
+                            <span class="badge danger-badge">Failure</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('analysis', prediction_id=pred.id) }}" class="btn-secondary btn-sm">View Analysis</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <p>No prediction history available.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

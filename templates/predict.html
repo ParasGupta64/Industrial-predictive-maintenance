@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header">
+    <h1>New Prediction</h1>
+    <p class="subtitle">Enter machine parameters to predict failure risk</p>
+</div>
+
+<div class="card form-card">
+    <form id="prediction-form" action="{{ url_for('predict') }}" method="post">
+        <div class="input-grid">
+            <div class="input-group">
+                <label for="air_temperature">Air Temperature <span class="unit">[K]</span></label>
+                <input type="number" id="air_temperature" name="air_temperature" step="any" min="295" max="305" required placeholder="e.g. 298.1" value="{{ request_form.get('air_temperature', '') if request_form else '' }}">
+            </div>
+            
+            <div class="input-group">
+                <label for="process_temperature">Process Temperature <span class="unit">[K]</span></label>
+                <input type="number" id="process_temperature" name="process_temperature" step="any" min="305" max="315" required placeholder="e.g. 308.6" value="{{ request_form.get('process_temperature', '') if request_form else '' }}">
+            </div>
+            
+            <div class="input-group">
+                <label for="rotational_speed">Rotational Speed <span class="unit">[rpm]</span></label>
+                <input type="number" id="rotational_speed" name="rotational_speed" step="any" min="1100" max="2900" required placeholder="e.g. 1551" value="{{ request_form.get('rotational_speed', '') if request_form else '' }}">
+            </div>
+            
+            <div class="input-group">
+                <label for="torque">Torque <span class="unit">[Nm]</span></label>
+                <input type="number" id="torque" name="torque" step="any" min="0" max="80" required placeholder="e.g. 42.8" value="{{ request_form.get('torque', '') if request_form else '' }}">
+            </div>
+            
+            <div class="input-group">
+                <label for="tool_wear">Tool Wear <span class="unit">[min]</span></label>
+                <input type="number" id="tool_wear" name="tool_wear" step="any" min="0" max="260" required placeholder="e.g. 75" value="{{ request_form.get('tool_wear', '') if request_form else '' }}">
+            </div>
+            
+            <div class="input-group">
+                <label for="machine_type">Machine Type</label>
+                <div class="select-wrapper">
+                    <select id="machine_type" name="type" required>
+                        <option value="" disabled {% if not request_form or not request_form.get('type') %}selected{% endif %}>Select Machine Type</option>
+                        <option value="L" {% if request_form and request_form.get('type') == 'L' %}selected{% endif %}>Low (L)</option>
+                        <option value="M" {% if request_form and request_form.get('type') == 'M' %}selected{% endif %}>Medium (M)</option>
+                        <option value="H" {% if request_form and request_form.get('type') == 'H' %}selected{% endif %}>High (H)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" id="submit-btn" class="btn-primary">
+                <span class="btn-text">Predict Machine Status</span>
+                <span class="btn-loader" style="display: none;"></span>
+            </button>
+        </div>
+        <div id="loading-overlay" style="display: none;">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p>Analyzing Machine & Generating AI Report...</p>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
