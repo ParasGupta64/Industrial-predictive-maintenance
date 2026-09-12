@@ -12,7 +12,7 @@ import pandas as pd
 from llm_explaination import generate_failure_explanation
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key_here' # In production, use os.environ.get('SECRET_KEY')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your_secret_key_here')
 if os.environ.get('TESTING') == 'true':
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'
 else:
