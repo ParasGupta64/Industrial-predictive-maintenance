@@ -297,7 +297,8 @@ def profile():
     return render_template('profile.html', total_predictions=total_predictions)
 
 
+with app.app_context():
+    db.create_all()
+
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
     app.run(debug=False)
